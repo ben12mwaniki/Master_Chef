@@ -1,14 +1,14 @@
 {% extends "root.html" %}
 {% block content %}
 
-<h1>User Login</h1>
+<h1 style="text-align: center;">User Login</h1>
 <hr/>
 {% if redirect_url is none %}
 <form action="./login" method="post">
 {% else %}
 <form action="./login?redirect_url={{ redirect_url }}" method="post">
 {% endif %}
-  <table>
+<table style="margin-left:auto; margin-right:auto;">
     <tr>
       <td>Email</td>
       <td><input type="email" name="email"/></td>
@@ -23,7 +23,7 @@
       </td>
        <td>
            <div>
-               <a class="btn btn-primary" href="/register" role="button">Register</a>
+               <a class="btn btn-primary" href="/register" role="button">No account?</a>
            </div>
        </td>
     </tr>

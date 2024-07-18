@@ -1,28 +1,16 @@
-# ECSE428 Master Chef (Group 1)
+# Master Chef
+## Introduction
+A website forum to share recipes and other cooking related tips. This project was originally meant to fulfill requirements for a course _ECSE 428 - Software Engineering Practice_ at McGill University in Fall 2022.
 
-## Project for ECSE 428 - Software Engineering Practice
-
-Forum website to share recipes and other cooking related things
-
-| Name | ID |
-|---|---|
-| Ruoli Wang | 260833864 |
-| Sia Ham | 260924883 |
-| Tyler Syme | 260929186 |
-| Zheyan Tu | 260828963 |
-| Ben Mwaniki | 260772709 |
-| Sandy Lao | 260925318 |
-| Theodore Peters | 260919785 |
-| Paul Teng | 260862906 |
-| Niilo Vuokila | 260926706 |
-| Jasmine Cheung | 260985168 |
+## Contributors
+Contributors: Ruoli Wang, Sia Ham, Tyler Syme, Zheyan Tu, Sandy Lao, Theodore Peters, Paul Teng, Niilo Vuokila, Jasmine Cheung and myself (Ben Mwaniki). 
 
 ## Setting up the environment
 
 ### Prerequisites
 
 *  Python 3
-*  Postgres 14
+*  Postgres 16
 
 ### Steps
 
@@ -30,21 +18,21 @@ Forum website to share recipes and other cooking related things
 2.  Create a Python virtual environment (***optional, but good idea***)
 
 ```sh
-python3 -m venv venv
+python -m venv .venv
 ```
 
-3.  Activate the venv
+3.  Activate the .venv
 
 ```sh
-source venv/bin/activate    # for linux or mac
-venv\Scripts\activate.bat   # for cmd.exe
-venv\Scripts\Activate.ps1   # for powershell
+source .venv/bin/activate    # for linux or mac
+.venv\Scripts\activate.bat   # for cmd.exe
+.venv\Scripts\activate       # for powershell
 ```
 
 4.  Install the dependencies
 
 ```sh
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 At this point, you are ready to [run the app](#running-the-app) or [run the tests](#running-the-tests).
@@ -61,10 +49,8 @@ deactivate
 Once the environment is setup, you can start the app:
 
 ```sh
-python3 app.py
+flask run
 ```
-
-(If that gives `flask` cannot be found, try `flask run` instead)
 
 ### Configuration
 

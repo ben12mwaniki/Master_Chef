@@ -50,11 +50,10 @@ def create_app(setup_db=True):
     app = Flask(__name__)
     app.secret_key = b'_123kjhmnb23!!'
 
-    pg_user = os.getenv("POSTGRES_USER", "postgres")
     db_args = {
         "password": os.getenv("POSTGRES_PASSWORD"),
-        "user": pg_user,
-        "dbname": os.getenv("POSTGRES_DB", pg_user),
+        "user": os.getenv("POSTGRES_USER"),
+        "dbname": os.getenv("POSTGRES_DB"),
         "host": os.getenv("POSTGRES_HOST", "localhost"),
         "port": os.getenv("POSTGRES_PORT", 5432)
     }
