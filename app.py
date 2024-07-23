@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, flash, redirect, session
 from werkzeug.security import check_password_hash
 
-import os
 import base64
 from project.db import Db
 from project.account import (
@@ -44,32 +43,16 @@ from project.recipe_query import (
 from project.comment import add_comment, search_comment_by_id, delete_comment_by_id, search_comment_by_recipe_id
 from project.recipe import delete_recipe_by_id
 from project.likes import did_user_like, like_recipe, unlike_recipe, get_recipes_liked_by_liker
+app = Flask(__name__)
+app.secret_key = b'_123kjhmnb23!!'
 
 
-def create_app(setup_db=True):
-    app = Flask(__name__)
-    app.secret_key = b'_123kjhmnb23!!'
+@app.route("/")
+def home():
+    return render_template("/home.html")
 
-    db_args = {
-        "password": os.getenv("POSTGRES_PASSWORD"),
-        "user": os.getenv("POSTGRES_USER"),
-        "dbname": os.getenv("POSTGRES_DB"),
-        "host": os.getenv("POSTGRES_HOST", "localhost"),
-        "port": os.getenv("POSTGRES_PORT", 5432)
-    }
-
-    if setup_db:
-        with app.app_context():
-            Db.init_session(**db_args)
-            Db.setup_tables()
-            app.teardown_appcontext(lambda e: Db.deinit_session())
-
-    @app.route("/")
-    def home():
-        return render_template("/home.html")
-
-    @app.route("/register", methods=["GET", "POST"])
-    def register():
+@app.route("/register", methods=["GET", "POST"])
+def register():
         if request.method == "POST":
             name = request.form['username']
             email = request.form['email']
@@ -86,8 +69,8 @@ def create_app(setup_db=True):
 
         return render_template("/register.html")
 
-    @app.route("/setting", methods=["GET", "POST"])
-    def account_setting():
+@app.route("/setting", methods=["GET", "POST"])
+def account_setting():
         # regardless of GET or POST, we kick them out if not logged in
         user_id = session.get('id')
         if user_id is None:
@@ -133,8 +116,8 @@ def create_app(setup_db=True):
                                email=account[2],
                                bio=account[4])
 
-    @app.route("/delete_account")
-    def delete_account():
+@app.route("/delete_account")
+def delete_account():
         if 'id' in session:
             delete_account_by_id(session.get('id'))
             session.pop('id', None)
@@ -143,8 +126,8 @@ def create_app(setup_db=True):
             flash('Your account cannot be deleted at the moment')
             return redirect('/setting')
 
-    @app.route("/login", methods=["GET", "POST"])
-    def login():
+@app.route("/login", methods=["GET", "POST"])
+def login():
         redirect_url = request.args.get('redirect_url', default='/profile')
         if 'id' in session:
             return redirect(redirect_url)
@@ -166,16 +149,16 @@ def create_app(setup_db=True):
 
         return render_template("/login.html", redirect_url=redirect_url)
 
-    @app.route("/logout", methods=["GET"])
-    def logout():
+@app.route("/logout", methods=["GET"])
+def logout():
         if 'id' in session:
             session.pop('id', None)
             return redirect('/')
         return "user not logged in", 401
 
-    @app.route("/profile")
-    @app.route("/profile/<int:id>")
-    def user_profile(id=None):
+@app.route("/profile")
+@app.route("/profile/<int:id>")
+def user_profile(id=None):
         uses_login_info = id is None
         if uses_login_info:
             id = session.get("id")
@@ -194,14 +177,14 @@ def create_app(setup_db=True):
 
         return render_template("/profile.html", user=current_user, recipes=recipes)
 
-    @app.route("/user", methods=["GET"])
-    def get_current_user():
+@app.route("/user", methods=["GET"])
+def get_current_user():
         if 'id' in session:
             return str(session.get("id")), 200
         return "No user", 401
 
-    @app.route("/users")
-    def search_users():
+@app.route("/users")
+def search_users():
         PAGE_ENTRIES = 10
 
         name = request.args.get("q", "")
@@ -221,8 +204,8 @@ def create_app(setup_db=True):
                                default_page=page,
                                results=[convert_account_obj_2(e) for e in results])
 
-    @app.route("/search")
-    def search():
+@app.route("/search")
+def search():
         title = request.args.get("q", "")
         default_tag = request.args.get("tag", "")
 
@@ -234,8 +217,8 @@ def create_app(setup_db=True):
         return render_template("/search_recipes.html",
                                default_query=title, default_tag=default_tag)
 
-    @app.route("/recipes/<int:id>")
-    def lookup_recipe(id):
+@app.route("/recipes/<int:id>")
+def lookup_recipe(id):
         recipe = search_recipe_by_id(id)
         if recipe is None:
             return render_template("/recipe.html",
@@ -258,15 +241,15 @@ def create_app(setup_db=True):
                                recipe=recipe, author=author, tags=tags, ingredients=ingredients,
                                allow_edits=allow_edits, user=session.get('id'), is_liked=is_liked, image=image)
 
-    @app.route("/recipes/create")
-    def render_create_recipe():
+@app.route("/recipes/create")
+def render_create_recipe():
         if 'id' not in session:
             flash("Not logged in")
             return redirect("/")
         return render_template("/upsert_recipe.html", recipe=None, ingredients=[])
 
-    @app.route("/recipes/edit/<int:id>")
-    def render_edit_recipe(id):
+@app.route("/recipes/edit/<int:id>")
+def render_edit_recipe(id):
         if "id" not in session:
             flash("Not logged in")
             return redirect("/")
@@ -282,8 +265,8 @@ def create_app(setup_db=True):
         ingredients = [{"name": e[1], "quantity": e[2]} for e in get_ingredients_of_recipe(id)]
         return render_template("/upsert_recipe.html", recipe=recipe, ingredients=ingredients)
 
-    @app.route("/recipes_liked")
-    def render_recipes_liked():
+@app.route("/recipes_liked")
+def render_recipes_liked():
         user_id = session.get('id')
         if user_id is None:
             flash('Please login first')
@@ -293,8 +276,8 @@ def create_app(setup_db=True):
         recipes = [convert_recipe_obj(e) for e in recipes]
         return render_template("/recipes_liked.html", recipes=recipes)
 
-    @app.route("/recipes_followed")
-    def render_recipes_followed():
+@app.route("/recipes_followed")
+def render_recipes_followed():
         user_id = session.get('id')
         if user_id is None:
             flash('Please login first')
@@ -304,8 +287,8 @@ def create_app(setup_db=True):
         recipes = [convert_recipe_obj(e) for e in recipes]
         return render_template("/recipes_followed.html", recipes=recipes)
 
-    @app.route("/recipes/<int:id>/tags", methods=["POST"])
-    def add_tag(id):
+@app.route("/recipes/<int:id>/tags", methods=["POST"])
+def add_tag(id):
         if 'id' not in session:
             return redirect(f"/login?redirect_url=/recipes/{id}")
 
@@ -319,8 +302,8 @@ def create_app(setup_db=True):
         # whatever happens, just redirect to the recipe page
         return redirect(f"/recipes/{id}")
 
-    @app.route("/api/search")
-    def api_search():
+@app.route("/api/search")
+def api_search():
         try:
             title = request.args.get("q", type=str)
             start = request.args.get("start", 0, type=int)
@@ -337,36 +320,36 @@ def create_app(setup_db=True):
         # we need to explicitly convert the time fields to strings
         return [convert_recipe_obj(recipe) for recipe in recipes]
 
-    @app.route("/api/tags")
-    def api_list_tags():
+@app.route("/api/tags")
+def api_list_tags():
         return get_all_tags()
 
-    @app.route("/api/users/<int:id>")
-    def api_lookup_account(id):
+@app.route("/api/users/<int:id>")
+def api_lookup_account(id):
         account = search_account_by_id(id)
         if account is None:
             return "Invalid account id", 404
 
         return convert_account_obj(account)
 
-    @app.route("/api/recipes/<int:id>")
-    def api_lookup_recipe(id):
+@app.route("/api/recipes/<int:id>")
+def api_lookup_recipe(id):
         recipe = search_recipe_by_id(id)
         if recipe is None:
             return "Invalid recipe id", 404
 
         return convert_recipe_obj(recipe)
 
-    @app.route("/api/recipes/<int:id>/like", methods=["POST"])
-    def api_like_recipe(id):
+@app.route("/api/recipes/<int:id>/like", methods=["POST"])
+def api_like_recipe(id):
         try:
             like_recipe(id, session["id"])
             return "Success", 200
         except Exception as e:
             return "Could not like recipe", 404
 
-    @app.route("/api/recipes/<int:id>/like", methods=["DELETE"])
-    def api_unlike_recipe(id):
+@app.route("/api/recipes/<int:id>/like", methods=["DELETE"])
+def api_unlike_recipe(id):
 
         try:
             unlike_recipe(id, session["id"])
@@ -374,16 +357,16 @@ def create_app(setup_db=True):
         except Exception as e:
             return "Could not unlike recipe", 404
 
-    @app.route("/api/recipes/<int:id>/tags")
-    def api_lookup_recipe_tags(id):
+@app.route("/api/recipes/<int:id>/tags")
+def api_lookup_recipe_tags(id):
         if search_recipe_by_id(id) is None:
             return "Invalid recipe id", 404
 
         tags = get_tags_of_recipe(id)
         return tags
 
-    @app.route("/api/recipes/add", methods=["POST"])
-    def api_create_recipe():
+@app.route("/api/recipes/add", methods=["POST"])
+def api_create_recipe():
         data = request.form.to_dict()
         try:
             result = create_recipe(data, session["id"])
@@ -392,8 +375,8 @@ def create_app(setup_db=True):
             flash("Could not create recipe")
             return redirect("/")
 
-    @app.route("/api/recipes/edit/<int:id>", methods=["POST"])
-    def api_edit_recipe(id):
+@app.route("/api/recipes/edit/<int:id>", methods=["POST"])
+def api_edit_recipe(id):
         data = request.form.to_dict()
         try:
             result = edit_recipe(id, data, session["id"])
@@ -402,22 +385,22 @@ def create_app(setup_db=True):
             flash("Could not update recipe")
             return redirect("/")
 
-    @app.route("/api/recipes/<int:id>/ingredients")
-    def api_lookup_recipe_ingredients(id):
+@app.route("/api/recipes/<int:id>/ingredients")
+def api_lookup_recipe_ingredients(id):
         if search_recipe_by_id(id) is None:
             return "Invalid recipe id", 404
 
         ingredients = get_ingredients_of_recipe(id)
         return ingredients
 
-    @app.route("/api/recipes/<int:recipe_id>/comments", methods=["GET"])
-    def api_get_comments_of_recipe(recipe_id):
+@app.route("/api/recipes/<int:recipe_id>/comments", methods=["GET"])
+def api_get_comments_of_recipe(recipe_id):
         if search_recipe_by_id(recipe_id) is None:
             return "Invalid recipe id", 404
         return search_comment_by_recipe_id(recipe_id)
 
-    @app.route("/api/comments/add", methods=["POST"])
-    def api_add_comment_to_recipe():
+@app.route("/api/comments/add", methods=["POST"])
+def api_add_comment_to_recipe():
 
         data = request.get_json()
 
@@ -441,8 +424,8 @@ def create_app(setup_db=True):
         new_id = add_comment(comment_title, comment_body, author_id, recipe_id)
         return (str(new_id), 200) if isinstance(new_id, int) else (str(new_id), 500)
 
-    @app.route("/api/recipes/<int:recipe_id>/images/add", methods=["POST"])
-    def api_add_image_to_recipe(recipe_id):
+@app.route("/api/recipes/<int:recipe_id>/images/add", methods=["POST"])
+def api_add_image_to_recipe(recipe_id):
         recipe = search_recipe_by_id(recipe_id)
         if recipe is None:
             return "Invalid edit", 400
@@ -462,8 +445,8 @@ def create_app(setup_db=True):
 
         return redirect(f"/recipes/{recipe_id}")
 
-    @app.route("/api/comments/<int:id>", methods=["DELETE"])
-    def delete_comment(id):
+@app.route("/api/comments/<int:id>", methods=["DELETE"])
+def delete_comment(id):
         comment = search_comment_by_id(id)
         user_id = session.get('id')
         if not user_id:
@@ -477,8 +460,8 @@ def create_app(setup_db=True):
         else:
             return err, 404
 
-    @app.route("/api/recipes/<int:id>", methods=["DELETE"])
-    def delete_recipe(id):
+@app.route("/api/recipes/<int:id>", methods=["DELETE"])
+def delete_recipe(id):
         recipe = search_recipe_by_id(id)
         user_id = session.get('id')
         if not user_id:
@@ -492,8 +475,8 @@ def create_app(setup_db=True):
         else:
             return err, 404
 
-    @app.route("/api/recipes/<int:recipe_id>/tags/<tag_name>", methods=["DELETE"])
-    def remove_tag(recipe_id, tag_name):
+@app.route("/api/recipes/<int:recipe_id>/tags/<tag_name>", methods=["DELETE"])
+def remove_tag(recipe_id, tag_name):
         user_id = session.get('id')
         err = remove_tag_of_recipe(tag_name, recipe_id, user_id)
         if not err:
@@ -501,8 +484,8 @@ def create_app(setup_db=True):
         else:
             return err, 404
 
-    @app.route("/api/shopping_list")
-    def view_shopping_list():
+@app.route("/api/shopping_list")
+def view_shopping_list():
         user_id = session.get('id')
         shopping_list, err = get_shopping_list_of_account(user_id)
         if shopping_list:
@@ -510,8 +493,8 @@ def create_app(setup_db=True):
         else:
             return err, 404
 
-    @app.route("/shopping_list")
-    def render_shopping_list():
+@app.route("/shopping_list")
+def render_shopping_list():
         user_id = session.get('id')
         if user_id is None:
             flash('Please login first')
@@ -519,8 +502,8 @@ def create_app(setup_db=True):
         shopping_list, err = get_shopping_list_of_account(user_id)
         return render_template("/shopping_list.html", shopping_list=shopping_list, err=err)
 
-    @app.route("/api/followed_accounts/<int:account_id>", methods=["DELETE"])
-    def unfollow_account(account_id):
+@app.route("/api/followed_accounts/<int:account_id>", methods=["DELETE"])
+def unfollow_account(account_id):
         user_id = session.get('id')
         err = unfollow_account_by_id(account_id, user_id)
         if not err:
@@ -528,8 +511,8 @@ def create_app(setup_db=True):
         else:
             return err, 404
 
-    @app.route("/api/followed_accounts/<int:account_id>", methods=["POST"])
-    def follow_account(account_id):
+@app.route("/api/followed_accounts/<int:account_id>", methods=["POST"])
+def follow_account(account_id):
         user_id = session.get('id')
         err = follow_account_by_id(account_id, user_id)
         if err is None:
@@ -537,8 +520,8 @@ def create_app(setup_db=True):
         else:
             return err, 404
 
-    @app.route("/api/shopping_list/add_ingredient/<int:ingredient_id>", methods=["POST"])
-    def add_ingredient_to_shopping_list(ingredient_id):
+@app.route("/api/shopping_list/add_ingredient/<int:ingredient_id>", methods=["POST"])
+def add_ingredient_to_shopping_list(ingredient_id):
         user_id = session.get('id')
         if not user_id:
             return "Please login first", 401
@@ -551,8 +534,8 @@ def create_app(setup_db=True):
         else:
             return err, 500
 
-    @app.route("/api/shopping_list/remove_ingredient/<int:ingredient_id>", methods=["DELETE"])
-    def remove_ingredient_from_shopping_list(ingredient_id):
+@app.route("/api/shopping_list/remove_ingredient/<int:ingredient_id>", methods=["DELETE"])
+def remove_ingredient_from_shopping_list(ingredient_id):
         user_id = session.get('id')
         if not user_id:
             return "Please login first", 401
@@ -568,10 +551,11 @@ def create_app(setup_db=True):
         else:
             return err, 500
 
-    return app
 
+with app.app_context():
+        Db.init_session()
+        Db.setup_tables()
+        app.teardown_appcontext(lambda e: Db.deinit_session())
 
 if __name__ == "__main__":
-    app = create_app()
-    app.debug = os.getenv("DEBUG") == "true"
     app.run()

@@ -10,7 +10,7 @@ On Linux, postgres runs as a service under its own user. Start the service with 
 
 ## Windows
 
-You may wish to use [WSL](https://docs.microsoft.com/en-us/windows/wsl/install), as windows command line is pretty gross in general.
+You may wish to use [WSL](https://docs.microsoft.com/en-us/windows/wsl/install), as windows command line is pretty annoying in general.
 
 If not, download PSQL through [the installer](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads); this will prompt you to enter a password (for example, postgres will be used here), and then a port (5432 is the default).
 

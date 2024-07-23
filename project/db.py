@@ -1,27 +1,30 @@
 from itertools import zip_longest
 
 import psycopg2
+import os
 from flask import g
 
-# XXX: You should never access these (unless you are Db)
+# Note: You should never access these (unless you are Db)
 _db_conf = None
 
 
 class Db:
 
     @staticmethod
-    def init_session(**kwargs):
+    def init_session():
         """
         Initializes data required to establish a database connection
-
-        Parameters
-        ----------
-        **kwargs:
-          forwarded to psycopg2 connect
         """
+        db_args = {
+            "password": os.getenv("POSTGRES_PASSWORD"),
+            "user": os.getenv("POSTGRES_USER"),
+            "dbname": os.getenv("POSTGRES_DB"),
+            "host": os.getenv("POSTGRES_HOST"),
+            "port": os.getenv("POSTGRES_PORT")
+        }
 
         global _db_conf
-        _db_conf = kwargs
+        _db_conf = db_args
 
     @staticmethod
     def deinit_session():
