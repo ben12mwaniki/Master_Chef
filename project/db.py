@@ -1,8 +1,11 @@
 from itertools import zip_longest
+from dotenv import load_dotenv
 
 import psycopg2
 import os
 from flask import g
+
+load_dotenv()
 
 # Note: You should never access these (unless you are Db)
 _db_conf = None
@@ -15,6 +18,7 @@ class Db:
         """
         Initializes data required to establish a database connection
         """
+
         db_args = {
             "password": os.getenv("POSTGRES_PASSWORD"),
             "user": os.getenv("POSTGRES_USER"),

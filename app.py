@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, flash, redirect, session
 from werkzeug.security import check_password_hash
+from dotenv import load_dotenv
 
+import os
 import base64
 from project.db import Db
 from project.account import (
@@ -43,8 +45,10 @@ from project.recipe_query import (
 from project.comment import add_comment, search_comment_by_id, delete_comment_by_id, search_comment_by_recipe_id
 from project.recipe import delete_recipe_by_id
 from project.likes import did_user_like, like_recipe, unlike_recipe, get_recipes_liked_by_liker
+
+load_dotenv()
 app = Flask(__name__)
-app.secret_key = b'_123kjhmnb23!!'
+app.secret_key = os.environ.get("SECRET_KEY")
 
 
 @app.route("/")
@@ -558,4 +562,5 @@ with app.app_context():
         app.teardown_appcontext(lambda e: Db.deinit_session())
 
 if __name__ == "__main__":
+    app.debug = os.environ.get("DEBUG", False)
     app.run()
