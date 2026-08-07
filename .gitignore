@@ -11,3 +11,4 @@ settings.py
 # minimal list of pytest-cov stuff
 .coverage
 coverage.xml
+
