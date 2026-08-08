@@ -1,80 +1,213 @@
-# Master Chef
-## Introduction
-A website forum to share recipes and other cooking related tips. This project was originally meant to fulfill requirements for a course _ECSE 428 - Software Engineering Practice_ at McGill University in Fall 2022.
+# Master Chef 🍳
 
-## Contributors
-Contributors: Ruoli Wang, Sia Ham, Tyler Syme, Zheyan Tu, Sandy Lao, Theodore Peters, Paul Teng, Niilo Vuokila, Jasmine Cheung and myself (Ben Mwaniki). 
+A social recipe-sharing platform built with Flask and PostgreSQL.
 
-## Setting up the environment
+Master Chef allows users to discover, create, and interact with recipes. Users can share their own recipes, organize them using tags, follow other cooks, comment on recipes, like recipes, and manage ingredients through a personalized shopping list.
 
-### Prerequisites
+This project was originally developed as part of **ECSE 428 - Software Engineering Practice** at McGill University during Fall 2022. The team followed Scrum practices throughout development, including sprint planning, backlog grooming, feature prioritization, and retrospectives.
 
-*  Python 3
-*  Postgres 16
+---
 
-### Steps
+# Live Demo
 
-1.  Clone the repo and navigate into the repo directory
-2.  Create a Python virtual environment (***optional, but good idea***)
+The deployed application is available here:
 
-```sh
+🔗 [Master Chef Application](PLACEHOLDER_URL)
+
+---
+
+# Screenshots
+
+## Recipe Discovery
+
+![Recipe Search](PLACEHOLDER_IMAGE_URL)
+
+## Recipe Details
+
+![Recipe Page](PLACEHOLDER_IMAGE_URL)
+
+## Shopping List
+
+![Shopping List](PLACEHOLDER_IMAGE_URL)
+
+---
+
+# Features
+
+## 🍲 Recipe Sharing
+
+Users can:
+
+- Create, edit, and delete recipes
+- Add ingredients and cooking instructions
+- Upload recipe images
+- Organize recipes using tags
+- Search for recipes
+
+## 👥 Social Interaction
+
+Users can:
+
+- Follow other users
+- Like and unlike recipes
+- Comment on recipes
+- View recipes from followed users
+- Browse liked recipes
+
+## 🛒 Shopping List
+
+Users can:
+
+- Add recipe ingredients to a personal shopping list
+- Remove shopping items
+- Track ingredients needed for cooking
+- Print shopping list
+
+## 🔐 User Accounts
+
+Users can:
+
+- Register and authenticate accounts
+- Manage their profiles
+- Update personal information
+
+---
+
+# Technology Stack
+
+| Layer | Technology |
+|---|---|
+| Backend | Flask (Python) |
+| Database | PostgreSQL |
+| Frontend | HTML, CSS, JavaScript, Jinja Templates |
+| Authentication | Flask Sessions + Werkzeug Password Hashing |
+| Testing | Pytest |
+| Deployment | PLACEHOLDER |
+
+---
+
+# Application Overview
+
+Master Chef follows a layered backend architecture:
+
+```
+Browser
+   |
+   v
+Flask Routes
+   |
+   v
+Feature Modules
+   |
+   v
+PostgreSQL Database
+```
+
+The application separates request handling, business logic, and database operations to keep the codebase modular and maintainable.
+
+For detailed architecture information:
+
+➡️ [View Technical Documentation](DOCUMENTATION.md)
+
+---
+
+# Running Locally
+
+## Prerequisites
+
+- Python 3
+- PostgreSQL 16
+
+## Setup
+
+Clone the repository:
+
+```bash
+git clone https://github.com/ben12mwaniki/Master_Chef.git
+cd MasterChef
+```
+
+Create a virtual environment:
+
+```bash
 python -m venv .venv
 ```
 
-3.  Activate the .venv
+Activate the environment:
 
-```sh
-source .venv/bin/activate    # for linux or mac
-.venv\Scripts\activate.bat   # for cmd.exe
-.venv\Scripts\activate       # for powershell
+Linux/macOS:
+
+```bash
+source .venv/bin/activate
 ```
 
-4.  Install the dependencies
+Windows:
 
-```sh
-pip install -r requirements.txt
+```bash
+.venv\Scripts\activate
 ```
 
-At this point, you are ready to [run the app](#running-the-app) or [run the tests](#running-the-tests).
+Install dependencies:
 
-As a side note,
-to exit / deactivate the venv, do
-
-```sh
-deactivate
+```bash
+pip install -r requirements.txt && pip install -r requirements-dev.txt
 ```
 
-## Running the app
+---
 
-Once the environment is setup, you can start the app:
+## Configuration
 
-```sh
+Create a `.env` file:
+
+```env
+DEBUG=false
+
+SECRET_KEY=your_secret_key
+
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=your_password
+POSTGRES_DB=masterchef
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+```
+
+---
+
+## Running the Application
+
+Start the Flask server:
+
+```bash
 flask run
 ```
 
-### Configuration
+The application will be available at:
 
-Parts of the app's behavior must / can be configured via environment variables
+```
+http://127.0.0.1:5000
+```
 
-| Environment Variable | Values | Default Value | Purpose |
-|----------------------|--------|-----------|---------|
-| `DEBUG` | boolean | `false` | Run in debug mode when true (which, among other things, means the app will automatically load changes to the code without needing to be rerun) |
-| `POSTGRES_USER` | db login username | `postgres` | The app uses this to login to the postgres server |
-| `POSTGRES_PASSWORD` | db login password | ***Mandatory*** | The app uses this to login to the postgres server |
-| `POSTGRES_DB` | db name | follows variable `POSTGRES_USER` | The database name in which the tables exist / will be created under |
-| `POSTGRES_HOST` | hostname or IP | `localhost` | The address of the postgres server |
-| `POSTGRES_PORT` | port number | `5432` | The port of the postgres server |
+---
 
-## Running the tests
+# Testing
 
-Once the environment is setup, you can also run the tests:
+Run automated tests:
 
-```sh
+```bash
 pytest --cov=project --cov-branch --cov-report term
 ```
 
-***Note: For Windows folks***
+---
 
-Due to unfortunate database stuff, you also need to supply a running database when testing
-(just like how you would if you run the app).
-***Warning: Whatever you pick, it likely will destroy existing data, so don't supply the production database!!!***
+# Contributors
+
+- Ruoli Wang
+- Sia Ham
+- Tyler Syme
+- Zheyan Tu
+- Sandy Lao
+- Theodore Peters
+- Paul Teng
+- Niilo Vuokila
+- Jasmine Cheung
+- Ben Mwaniki

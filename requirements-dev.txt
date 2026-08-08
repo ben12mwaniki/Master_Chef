@@ -8,7 +8,7 @@ coverage==7.6.0
 pytest-postgresql==4.1.1
 mirakuru==2.5.2
 port-for==0.7.2
-psycopg2-binary==2.9.9
+psycopg2-binary
 
 # Supporting libraries
 attrs==22.1.0
