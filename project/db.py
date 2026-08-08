@@ -16,20 +16,28 @@ class Db:
     @staticmethod
     def init_session():
         """
-        Initializes data required to establish a database connection
+        Initializes data required to establish a database connection.
+
+        Uses DATABASE_URL when provided (for cloud deployments such as Neon).
+        Otherwise falls back to the individual PostgreSQL environment variables
+        used for local development.
         """
 
-        db_args = {
-            "password": os.getenv("POSTGRES_PASSWORD"),
-            "user": os.getenv("POSTGRES_USER"),
-            "dbname": os.getenv("POSTGRES_DB"),
-            "host": os.getenv("POSTGRES_HOST"),
-            "port": os.getenv("POSTGRES_PORT")
-        }
+        database_url = os.getenv("DATABASE_URL")
 
         global _db_conf
-        _db_conf = db_args
 
+        if database_url:
+            _db_conf = {"dsn": database_url}
+        else:
+            _db_conf = {
+                "password": os.getenv("POSTGRES_PASSWORD"),
+                "user": os.getenv("POSTGRES_USER"),
+                "dbname": os.getenv("POSTGRES_DB"),
+                "host": os.getenv("POSTGRES_HOST"),
+                "port": os.getenv("POSTGRES_PORT")
+            }
+            
     @staticmethod
     def deinit_session():
         """
@@ -60,9 +68,28 @@ class Db:
         return g._conn
 
     @staticmethod
+    def get_session():
+        """
+        Returns a connection to a database.
+
+        If no session exists, a new connection is created using the
+        configuration initialized by init_session().
+        """
+
+        if "_conn" not in g:
+            if "dsn" in _db_conf:
+                g._conn = psycopg2.connect(_db_conf["dsn"])
+            else:
+                g._conn = psycopg2.connect(**_db_conf)
+
+        return g._conn
+
+    @staticmethod
     def setup_tables():
         """
         Creates the tables defined in schema.sql if they are absent
+        
+        Also initializes the predefined application tags from db_data.sql.
         """
 
         _conn = Db.get_session()

@@ -233,7 +233,21 @@ Each module manages a specific application responsibility.
 
 # Database Design
 
-Master Chef uses a relational PostgreSQL database.
+Master Chef uses a relational PostgreSQL database. Simplified schema: 
+ ```
+                              accounts
+                                 │
+                                 ├── recipes
+                                 │     ├── ingredients
+                                 │     ├── comments
+                                 │     ├── tags ─── recipe_tags
+                                 │     └── liked_recipes
+                                 │
+                                 ├── shopping_items
+                                 │
+                                 └── followers
+
+```
 
 ## Main Entities
 
