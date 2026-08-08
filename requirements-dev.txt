@@ -1,16 +1,14 @@
-# Testing frameworks
+-r requirements.txt
+
 pytest==7.1.3
 pytest-bdd==6.0.0
 pytest-cov==4.0.0
 coverage==7.6.0
 
-# PostgreSQL test tooling (requires psycopg2-binary)
 pytest-postgresql==4.1.1
 mirakuru==2.5.2
 port-for==0.7.2
-psycopg2-binary
 
-# Supporting libraries
 attrs==22.1.0
 iniconfig==1.1.1
 pluggy==1.0.0
