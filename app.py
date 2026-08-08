@@ -56,23 +56,26 @@ app.secret_key = os.environ.get("SECRET_KEY")
 def home():
     return render_template("/home.html")
 
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
-        if request.method == "POST":
-            name = request.form['username']
-            email = request.form['email']
-            password = request.form['password']
+    if request.method == "POST":
+        name = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
 
-            err = add_new_account(name, email, password)
-            if err is not None:
-                flash(err)
-                return render_template("/register.html")
-
-            # return to register page with "Success" for now
-            flash("Success")
+        err = add_new_account(name, email, password)
+        if err is not None:
+            flash(err)
             return render_template("/register.html")
 
-        return render_template("/register.html")
+        # Account created successfully; send the user to login.
+        flash("Account created successfully. Please log in.")
+        return redirect("/login")
+
+    return render_template("/register.html")
+
+
 
 @app.route("/setting", methods=["GET", "POST"])
 def account_setting():
