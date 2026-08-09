@@ -12,7 +12,7 @@ This project was originally developed as part of **ECSE 428 - Software Engineeri
 
 The deployed application is available here:
 
-🔗 [Master Chef Application](PLACEHOLDER_URL)
+🔗 [Master Chef Application](https://master-chef-3bhn.onrender.com/)
 
 ---
 
