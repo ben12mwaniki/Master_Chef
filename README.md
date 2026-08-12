@@ -82,7 +82,7 @@ Users can:
 | Frontend | HTML, CSS, JavaScript, Jinja Templates |
 | Authentication | Flask Sessions + Werkzeug Password Hashing |
 | Testing | Pytest |
-| Deployment | PLACEHOLDER |
+| Deployment | Render |
 
 ---
 
