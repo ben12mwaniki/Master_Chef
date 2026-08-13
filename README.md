@@ -14,24 +14,25 @@ The deployed application is available here:
 
 🔗 [Master Chef Application](https://master-chef-3bhn.onrender.com/)
 
+<!--
 ---
+
 
 # Screenshots
 
 ## Recipe Discovery
-
 ![Recipe Search](PLACEHOLDER_IMAGE_URL)
 
 ## Recipe Details
-
 ![Recipe Page](PLACEHOLDER_IMAGE_URL)
 
 ## Shopping List
-
 ![Shopping List](PLACEHOLDER_IMAGE_URL)
 
----
 
+
+---
+-->
 # Features
 
 ## 🍲 Recipe Sharing
